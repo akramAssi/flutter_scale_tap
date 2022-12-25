@@ -42,6 +42,9 @@ class ScaleTap extends StatefulWidget {
   final Curve? opacityCurve;
   final double? opacityMinValue;
   final bool enableFeedback;
+  final bool enableHapticFeedback;
+  final VoidCallback hapticFeedback;
+  final HitTestBehavior? behavior;
 
   const ScaleTap({
     Key? key,
@@ -55,6 +58,9 @@ class ScaleTap extends StatefulWidget {
     this.opacityMinValue,
     this.scaleCurve,
     this.opacityCurve,
+    this.behavior,
+    this.enableHapticFeedback = true,
+    this.hapticFeedback = HapticFeedback.selectionClick,
   }) : super(key: key);
 
   @override
@@ -151,10 +157,14 @@ class _ScaleTapState extends State<ScaleTap> with SingleTickerProviderStateMixin
         onPointerCancel: _onTapCancel,
         onPointerUp: _onTapUp,
         child: GestureDetector(
+          behavior: widget.behavior,
           onTap: isTapEnabled
               ? () {
                   if (widget.enableFeedback) {
                     SystemSound.play(SystemSoundType.click);
+                  }
+                  if (widget.enableHapticFeedback) {
+                    widget.hapticFeedback();
                   }
                   widget.onPressed?.call();
                 }
